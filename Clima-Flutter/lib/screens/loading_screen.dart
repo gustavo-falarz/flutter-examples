@@ -1,0 +1,41 @@
+import 'package:clima/services/location.dart';
+import 'package:clima/screens/location_screen.dart';
+import 'package:clima/services/networking.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:http/http.dart';
+
+class LoadingScreen extends StatefulWidget {
+  @override
+  _LoadingScreenState createState() => _LoadingScreenState();
+}
+
+class _LoadingScreenState extends State<LoadingScreen> {
+  @override
+  void initState() {
+    super.initState();
+    getWeather();
+  }
+
+  void getWeather() async {
+    Position position = await Location.getLocation();
+    Weather weather = await HttpService.getWeather(position.latitude, position.longitude);
+
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return LocationScreen(locationWeather: weather);
+    }));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: SpinKitFoldingCube(
+          color: Colors.white,
+          size: 50.0,
+        ),
+      ),
+    );
+  }
+}
